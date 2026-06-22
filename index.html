@@ -66,10 +66,7 @@
     footer { text-align: center; padding: 20px; font-size: 11px; color: var(--text-sub); border-top: 1px solid var(--border-color); margin-top: auto; background-color: var(--bg-card); }
     .badge { display: inline-block; background-color: var(--bg-body); padding: 6px 12px; border-radius: 20px; font-weight: 700; margin-bottom: 8px; border: 1px solid var(--border-color); }
   </style>
-  <script>
-    function cb(response) { document.getElementById('visitCount').innerText = response.value.toLocaleString(); }
-  </script>
-  <script src="https://api.countapi.xyz/hit/ramadzan1.github.io/tasbih-pintar?callback=cb"></script>
+ 
 </head>
 <body>
 
@@ -101,10 +98,15 @@
     <div id="zikirContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
   </main>
 
-  <footer>
-    <div class="badge">Telah digunakan: <span id="visitCount">...</span> kali</div>
-    <p style="font-weight: 600;">Dikembangkan oleh JK Masjid Kompleks Pertanian Serdang</p>
-    <p style="margin-top: 4px; opacity: 0.8;">Versi: v1.4.0 | 22 Jun 2026</p>
+<footer>
+    <div class="badge" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;">
+      <span>Telah digunakan:</span>
+      <!-- Widget Kaunter Imej Dinamik Mojo Counter -->
+      <img src="https://counter.mojonw.ch/v1/hits?id=ramadzan1.github.io.tasbih-pintar&bg=transparent&color=10b981&size=14" alt="Counter" style="display: inline-block; vertical-align: middle;">
+      <span>kali</span>
+    </div>
+    <p style="font-weight: 600;">Dijana oleh JK Masjid Kompleks Pertanian Serdang</p>
+    <p style="margin-top: 4px; opacity: 0.8;">Versi: v1.4.1 | 22 Jun 2026</p>
   </footer>
 
   <script>
