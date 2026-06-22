@@ -3,633 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MKPS: Tasbih Suara Pintar - Zikir Memandu Selamat</title>
-  
-  <!-- Menyambungkan fail manifest untuk sokongan Full Screen App (PWA) -->
+  <title>Tasbih Suara Pintar - Zikir Memandu Selamat</title>
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  
-  <!-- Tailwind CSS untuk reka bentuk premium -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .arabic-font {
-      font-family: 'Amiri', serif;
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s, color 0.3s; }
+    .arabic-font { font-family: 'Amiri', serif; }
   </style>
-<!-- Script Pihak Ketiga untuk Mengira Jumlah Pengunjung Secara Dinamik -->
   <script>
-    function cb(response) {
-      document.getElementById('visitCount').innerText = response.value.toLocaleString();
-    }
+    function cb(response) { document.getElementById('visitCount').innerText = response.value.toLocaleString(); }
   </script>
   <script src="https://api.countapi.xyz/hit/ramadzan1.github.io/tasbih-pintar?callback=cb"></script>
-  
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col pb-4">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-  <!-- Header & Status Sesi -->
-  <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-40 px-4 py-4 shadow-lg">
+  <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-40 px-4 py-4">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 text-emerald-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
         </div>
         <div>
-          <h1 class="text-base font-bold text-slate-100">Tasbih Suara Pintar</h1>
-          <p class="text-xs text-slate-400">Selamat & Fokus Semasa Memandu</p>
+          <h1 class="text-base font-bold">Tasbih Suara</h1>
+          <p class="text-xs opacity-70">JK Masjid K. Pertanian Serdang</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="resetAll()" class="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 border border-slate-600 transition text-xs font-semibold flex items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 4.5h-4.5" />
-          </svg>
-          Mula Semula
-        </button>
+      <div class="flex gap-2">
+        <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-700 border border-slate-600"><svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path id="iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg></button>
       </div>
     </div>
   </header>
 
-  <!-- Kandungan Utama -->
   <main class="flex-grow max-w-md w-full mx-auto px-4 mt-6 space-y-6">
+    <select id="zikirSelector" onchange="changeZikirSet(this.value)" class="w-full bg-slate-800 text-slate-100 p-3 rounded-xl border border-slate-700 font-semibold shadow-lg">
+      <option value="umum">Zikir Selepas Solat (33x)</option>
+      <option value="nabi-yunus">Zikir Nabi Yunus (100x)</option>
+      <option value="istighfar">Sayyidul Istighfar (100x)</option>
+      <option value="selawat">Selawat Nabi (100x)</option>
+    </select>
 
-    <!-- Kad Kawalan Utama (Main Controller) -->
-    <div class="bg-gradient-to-br from-emerald-950/40 to-slate-800 border border-emerald-500/20 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-      <div class="absolute -top-10 -right-10 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl"></div>
-      
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-emerald-400">Sesi Zikir Aktif</h2>
-          <p class="text-slate-300 text-sm mt-0.5" id="engineStatus">Sedia untuk berzikir...</p>
-        </div>
-        <div class="flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Auto-Detect</span>
-        </div>
-      </div>
-
-      <!-- Butang Besar Mula/Henti (Mesra Pemandu) -->
-      <button id="masterActionBtn" onclick="toggleListening()" class="w-full py-4 px-6 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-emerald-500/10 transition-all duration-300 active:scale-[0.98]">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor" id="playBtnIcon">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-        </svg>
-        <span id="playBtnText">Mula Pengecaman Suara</span>
-      </button>
-
-      <!-- Tetapan Maklum Balas Suara -->
-      <div class="grid grid-cols-2 gap-3 mt-4 border-t border-slate-700/50 pt-4 text-xs text-slate-400">
-  <label class="flex items-center gap-2 cursor-pointer">
-  <input type="checkbox" id="voiceFeedbackToggle" checked class="rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 bg-slate-700 w-4 h-4">
-  <span>Sebut Bilangan Suara</span>
-</label>
-        <label class="flex items-center gap-2 cursor-pointer">
-          <input type="checkbox" id="beepFeedbackToggle" checked class="rounded border-slate-600 text-emerald-500 focus:ring-emerald-500 bg-slate-700 w-4 h-4">
-          <span>Bunyi Beep (Kesan)</span>
-        </label>
+    <div class="bg-gradient-to-br from-emerald-950 to-slate-800 border border-emerald-500/20 rounded-2xl p-5 shadow-xl">
+      <p class="text-sm mb-3" id="engineStatus">Sedia untuk berzikir...</p>
+      <button id="masterActionBtn" onclick="toggleListening()" class="w-full py-4 rounded-xl bg-emerald-500 text-slate-950 font-bold text-lg flex items-center justify-center gap-2">Mula Pengecaman Suara</button>
+      <div class="grid grid-cols-2 gap-3 mt-4 text-xs opacity-70">
+        <label class="flex items-center gap-2"><input type="checkbox" id="voiceFeedbackToggle" class="w-4 h-4"> Sebut Bilangan</label>
+        <label class="flex items-center gap-2"><input type="checkbox" id="beepFeedbackToggle" checked class="w-4 h-4"> Bunyi Beep</label>
       </div>
     </div>
 
-    <!-- Papan Skor Kemajuan Misi (Target of the Day) -->
-    <div class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 shadow-md">
-      <div class="flex justify-between items-center mb-3">
-        <h3 class="text-sm font-bold text-slate-200">Misi Harian Anda</h3>
-        <span class="text-xs text-emerald-400 font-semibold" id="overallProgressPercent">0% Selesai</span>
-      </div>
-      <div class="w-full bg-slate-700 h-2.5 rounded-full overflow-hidden">
-        <div id="overallProgressBar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full w-0 transition-all duration-500 rounded-full"></div>
-      </div>
-    </div>
-
-    <!-- Senarai Kad Zikir (Dinamik) -->
-    <div class="space-y-4" id="zikirContainer">
-      <!-- Kad Zikir akan digenerate melalui JavaScript di bawah -->
-    </div>
-
+    <div id="zikirContainer" class="space-y-4"></div>
   </main>
 
-<!-- Maklumat Kaki (Footer & Versi Kemaskini) -->
-  <footer class="mt-auto text-center py-6 text-xs text-slate-500 border-t border-slate-800/40 max-w-md w-full mx-auto px-4">
-    <!-- Paparan Papan Statistik Pengguna -->
-    <div class="mb-3 inline-flex items-center gap-2 bg-slate-800/60 px-3 py-1.5 rounded-full border border-slate-700/50 text-slate-400">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-      <span>Telah digunakan sebanyak: <span id="visitCount" class="font-bold text-emerald-400">...</span> kali</span>
-    </div>
-    
-    <p>MKPS Tasbih Suara Pintar &copy; 2026</p>
-    <p class="mt-1 text-slate-400">
-      Versi: <span class="font-bold text-emerald-500">v1.3.0</span> | 
-      Kemaskini: <span class="font-bold text-emerald-500">22 Jun 2026</span>
-    </p>
+  <footer class="mt-auto text-center py-6 text-xs opacity-60">
+    <div class="mb-3"><span class="bg-slate-800 px-3 py-1 rounded-full">Digunakan: <span id="visitCount">...</span> kali</span></div>
+    <p>Dikembangkan oleh JK Masjid Kompleks Pertanian Serdang</p>
+    <p>Versi: v1.3.0 | 22 Jun 2026</p>
   </footer>
 
-  <!-- Modal Pengesahan Set Semula (Custom Modal - Ganti Browser Confirm) -->
-  <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl transform scale-95 transition-all duration-300" id="modalBox">
-      <div class="w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-500 mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-      </div>
-      <h3 class="text-lg font-bold text-slate-100">Set Semula Semua Kaunter?</h3>
-      <p class="text-sm text-slate-400 mt-2">Semua jumlah zikir aktif dan data simpanan harian anda akan dikosongkan semula ke sifar (0). Adakah anda pasti?</p>
-      <div class="flex gap-3 mt-6">
-        <button onclick="closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 font-semibold text-sm transition">
-          Batal
-        </button>
-        <button onclick="executeResetAll()" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 font-semibold text-sm text-white transition">
-          Ya, Padam Semua
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Notifikasi Toast Khas -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 px-5 py-3 rounded-xl shadow-xl font-bold flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none translate-y-4 z-50">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-    </svg>
-    <span id="toastMsg">Selesai! Alhamdulillah.</span>
-  </div>
-
-  <!-- Audio Beep Generator (Web Audio API) -->
   <script>
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq = 600, duration = 0.1) {
-      if (!document.getElementById('beepFeedbackToggle').checked) return;
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        console.log("AudioContext error: ", e);
-      }
+    const zikirSets = {
+      "umum": [{id:'subhanallah', name:'Subhanallah', arabic:'سُبْحَانَ ٱللَّهِ', keywords:['subhanallah'], target:33}, {id:'alhamdulillah', name:'Alhamdulillah', arabic:'ٱلْحَمْدُ لِلَّهِ', keywords:['alhamdulillah'], target:33}],
+      "nabi-yunus": [{id:'yunus', name:'Zikir Nabi Yunus', arabic:'لَا إِلَٰهَ إِلَّا أَنْتَ', keywords:['la ilaha'], target:100}],
+      "istighfar": [{id:'istighfar', name:'Istighfar', arabic:'أَسْتَغْفِرُ ٱللَّهَ', keywords:['astaghfirullah'], target:100}],
+      "selawat": [{id:'selawat', name:'Selawat', arabic:'ٱللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', keywords:['allahumma salli'], target:100}]
+    };
+
+    let zikirData = zikirSets.umum.map(z => ({...z, count: 0, completed: false}));
+    let isListening = false, recognition = null;
+
+    function toggleDarkMode() {
+      const body = document.body;
+      const isDark = body.classList.contains('bg-slate-900');
+      body.className = isDark ? 'bg-white text-slate-900 min-h-screen flex flex-col' : 'bg-slate-900 text-slate-100 min-h-screen flex flex-col';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
     }
 
-    function playSuccessSound() {
-      playBeep(880, 0.15);
-      setTimeout(() => playBeep(1100, 0.25), 100);
-    }
-  </script>
-
-  <!-- Logik Utama Aplikasi -->
-  <script>
-    // Konfigurasi Zikir Pintar
-    let zikirData = [
-      {
-        id: 'subhanallah',
-        name: 'Subhanallah',
-        arabic: 'سُبْحَانَ ٱللَّهِ',
-        meaning: 'Maha Suci Allah',
-        keywords: ['subhanallah', 'subhan allah', 'subhan', 'sobhana'],
-        count: 0,
-        target: 33,
-        completed: false
-      },
-      {
-        id: 'alhamdulillah',
-        name: 'Alhamdulillah',
-        arabic: 'ٱلْحَمْدُ لِلَّهِ',
-        meaning: 'Segala Puji Bagi Allah',
-        keywords: ['alhamdulillah', 'alhamdullilah', 'alhamdullillah', 'alhamdulilah', 'hamdilah'],
-        count: 0,
-        target: 33,
-        completed: false
-      },
-      {
-        id: 'lailahaillallah',
-        name: 'La ilaha illallah',
-        arabic: 'لَا إِلَٰهَ إِلَّا ٱللَّهُ',
-        meaning: 'Tiada Tuhan Melainkan Allah',
-        keywords: ['la ilaha illallah', 'lailahaillallah', 'la ilaha', 'lailahailallah', 'lailaha', 'lailahaillah'],
-        count: 0,
-        target: 33,
-        completed: false
-      },
-      {
-        id: 'allahuakbar',
-        name: 'Allahu Akbar',
-        arabic: 'ٱللَّهُ أَكْبَرُ',
-        meaning: 'Allah Maha Besar',
-        keywords: ['allahu akbar', 'allahuakbar', 'allah hu akbar', 'allah akbar', 'allahu', 'allahuakbar'],
-        count: 0,
-        target: 33,
-        completed: false
-      }
-    ];
-
-    let isListening = false;
-    let recognition = null;
-    let ttsVoice = null;
-
-    // Load data lama jika ada
-    if (localStorage.getItem('tasbih_suara_data')) {
-      const savedData = JSON.parse(localStorage.getItem('tasbih_suara_data'));
-      // Map data untuk mengekalkan fungsi keywords jika ada update dari database
-      zikirData.forEach(item => {
-        const saved = savedData.find(s => s.id === item.id);
-        if (saved) {
-          item.count = saved.count;
-          item.target = saved.target;
-          item.completed = saved.completed || false;
-        }
-      });
+    function changeZikirSet(setId) {
+      zikirData = zikirSets[setId].map(z => ({...z, count: 0, completed: false}));
+      renderZikirCards();
     }
 
-    // Semak sekiranya persekitaran (browser/sandbox) menyokong Speech Synthesis secara selamat
-    const hasSpeechSynthesis = typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis !== null && window.speechSynthesis !== undefined;
-
-    if (hasSpeechSynthesis) {
-      try {
-        window.speechSynthesis.onvoiceschanged = () => {
-          const voices = window.speechSynthesis.getVoices();
-          // Cari suara Bahasa Melayu atau Bahasa Indonesia yang sesuai
-          ttsVoice = voices.find(v => v.lang.startsWith('ms') || v.lang.startsWith('id')) || voices[0];
-        };
-      } catch (e) {
-        console.warn("Gagal menetapkan onvoiceschanged:", e);
-      }
-    }
-
-    function speakText(text) {
-      if (!hasSpeechSynthesis) return;
-      if (!document.getElementById('voiceFeedbackToggle').checked) return;
-      try {
-        window.speechSynthesis.cancel(); // Potong suara lama jika bertindih
-        const utterance = new SpeechSynthesisUtterance(text);
-        if (ttsVoice) utterance.voice = ttsVoice;
-        utterance.rate = 1.1; // Sedikit laju supaya tidak mengganggu tempo pemanduan
-        window.speechSynthesis.speak(utterance);
-      } catch (e) {
-        console.warn("Gagal memainkan suara SpeechSynthesis:", e);
-      }
-    }
-
-    // Render Paparan Senarai Zikir
     function renderZikirCards() {
       const container = document.getElementById('zikirContainer');
-      container.innerHTML = '';
-
-      zikirData.forEach((zikir) => {
-        const progressPercent = Math.min(100, Math.round((zikir.count / zikir.target) * 100));
-        
-        const cardHTML = `
-          <div class="bg-slate-800 border ${zikir.completed ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-700/60'} rounded-2xl p-5 shadow-sm transition-all duration-300">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-semibold text-emerald-400 tracking-wider">${zikir.meaning}</span>
-                <h3 class="text-lg font-bold text-slate-100 mt-0.5">${zikir.name}</h3>
-              </div>
-              <div class="text-right">
-                <span class="arabic-font text-2xl font-bold text-slate-300 block mb-1">${zikir.arabic}</span>
-              </div>
-            </div>
-
-            <!-- Bahagian Kaunter Dinamik -->
-            <div class="flex items-center justify-between mt-4 bg-slate-900/60 rounded-xl p-3 border border-slate-700/40">
-              <div class="flex items-center gap-1">
-                <!-- Butang Tolak Manual (Untuk Adjust kalau terlebih kira) -->
-                <button onclick="adjustCount('${zikir.id}', -1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-200 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6" />
-                  </svg>
-                </button>
-                <button onclick="adjustCount('${zikir.id}', 1)" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-200 transition">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </button>
-              </div>
-
-              <!-- Nilai Kaunter Sebenar -->
-              <div class="flex items-baseline gap-2">
-                <span class="text-4xl font-extrabold text-slate-50 tracking-tight" id="count-${zikir.id}">${zikir.count}</span>
-                <span class="text-slate-500 text-xs">/</span>
-                <div class="flex items-center gap-1">
-                  <input type="number" value="${zikir.target}" onchange="updateTarget('${zikir.id}', this.value)" 
-                         class="w-12 bg-transparent text-slate-400 font-semibold text-sm border-b border-dashed border-slate-600 focus:border-emerald-500 focus:outline-none text-center py-0.5">
-                </div>
-              </div>
-
-              <!-- Indikator Siap (Tick) -->
-              <div class="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${zikir.completed ? 'bg-emerald-500/20 text-emerald-400 scale-110 border border-emerald-500/30' : 'bg-slate-800 text-slate-600'}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-
-            <!-- Progress Bar Kecil per Zikir -->
-            <div class="mt-3.5">
-              <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                <div class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
-              </div>
-            </div>
+      container.innerHTML = zikirData.map(z => `
+        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold">${z.name}</h3>
+            <span class="arabic-font text-xl">${z.arabic}</span>
           </div>
-        `;
-        container.innerHTML += cardHTML;
-      });
-
-      calculateOverallProgress();
+          <div class="text-3xl font-bold mt-2">${z.count} / ${z.target}</div>
+        </div>
+      `).join('');
     }
 
-    // Kira % Keseluruhan Misi Harian
-    function calculateOverallProgress() {
-      const totalCount = zikirData.reduce((acc, curr) => acc + Math.min(curr.count, curr.target), 0);
-      const totalTarget = zikirData.reduce((acc, curr) => acc + curr.target, 0);
-      const overallPercent = totalTarget > 0 ? Math.round((totalCount / totalTarget) * 100) : 0;
-
-      document.getElementById('overallProgressPercent').innerText = `${overallPercent}% Selesai`;
-      document.getElementById('overallProgressBar').style.width = `${overallPercent}%`;
-    }
-
-    // Kemaskini sasaran dinamik oleh user
-    function updateTarget(id, value) {
-      const targetVal = parseInt(value);
-      if (isNaN(targetVal) || targetVal < 1) return;
-      
-      const zikir = zikirData.find(z => z.id === id);
-      if (zikir) {
-        zikir.target = targetVal;
-        if (zikir.count >= zikir.target && !zikir.completed) {
-          zikir.completed = true;
-        } else if (zikir.count < zikir.target) {
-          zikir.completed = false;
-        }
-        saveToLocalStorage();
-        renderZikirCards();
-      }
-    }
-
-    // Tolak atau Tambah Bilangan Secara Manual (Sangat mudah kalau voice detect tersilap)
-    function adjustCount(id, amount) {
-      const zikir = zikirData.find(z => z.id === id);
-      if (zikir) {
-        zikir.count = Math.max(0, zikir.count + amount);
-        
-        if (zikir.count >= zikir.target && !zikir.completed) {
-          zikir.completed = true;
-          playSuccessSound();
-          showToast(`Sasaran ${zikir.name} tercapai!`);
-        } else if (zikir.count < zikir.target) {
-          zikir.completed = false;
-        }
-        
-        saveToLocalStorage();
-        renderZikirCards();
-        playBeep(amount > 0 ? 500 : 350, 0.08);
-      }
-    }
-
-    // Save Data ke Local Storage
-    function saveToLocalStorage() {
-      localStorage.setItem('tasbih_suara_data', JSON.stringify(zikirData));
-    }
-
-    // Buka Modal Pengesahan Tersuai (Custom Modal)
-    function resetAll() {
-      const modal = document.getElementById('confirmModal');
-      const modalBox = document.getElementById('modalBox');
-      
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      modalBox.classList.remove('scale-95');
-      modalBox.classList.add('scale-100');
-    }
-
-    // Tutup Modal Pengesahan Tersuai
-    function closeConfirmModal() {
-      const modal = document.getElementById('confirmModal');
-      const modalBox = document.getElementById('modalBox');
-      
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      modalBox.classList.remove('scale-100');
-      modalBox.classList.add('scale-95');
-    }
-
-    // Jalankan Set Semula (Reset) Selepas Pengesahan di Modal
-    function executeResetAll() {
-      zikirData.forEach(z => {
-        z.count = 0;
-        z.completed = false;
-      });
-      saveToLocalStorage();
-      renderZikirCards();
-      closeConfirmModal();
-      showToast("Semua kaunter telah diset semula.");
-    }
-
-    // Papar Notifikasi Atas Skrin (Selesa & Moden)
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toastMsg').innerText = message;
-      toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-      toast.classList.add('opacity-100', 'translate-y-0');
-
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-        toast.classList.remove('opacity-100', 'translate-y-0');
-      }, 3000);
-    }
-
-    // Setup Pengecaman Suara Web Speech API
-    function setupSpeechRecognition() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
-      if (!SpeechRecognition) {
-        document.getElementById('engineStatus').innerText = "Ralat: Browser tidak menyokong fungsi suara.";
-        document.getElementById('masterActionBtn').disabled = true;
-        return;
-      }
-
-      recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.lang = 'ms-MY'; // Set Bahasa Melayu untuk fonetik tempatan yang lebih tepat
-      recognition.interimResults = false;
-
-      recognition.onstart = () => {
-        isListening = true;
-        document.getElementById('engineStatus').innerText = "Sedang mendengar zikir anda...";
-        updateButtonUI(true);
-      };
-
-      recognition.onresult = (event) => {
-        const lastResultIndex = event.results.length - 1;
-        const textSpoken = event.results[lastResultIndex][0].transcript.toLowerCase().trim();
-        
-        document.getElementById('engineStatus').innerText = `Didengar: "${textSpoken}"`;
-        processSpokenWords(textSpoken);
-      };
-
-      recognition.onerror = (event) => {
-        console.error("Speech Recognition Error", event.error);
-        if (event.error === 'not-allowed') {
-          document.getElementById('engineStatus').innerText = "Akses mikrofon ditolak.";
-          stopListening();
-        }
-      };
-
-      recognition.onend = () => {
-        // Auto-restart demi kemudahan memandu jika user tidak menekan butang henti sendiri
-        if (isListening) {
-          try {
-            recognition.start();
-          } catch (e) {
-            console.log("Error restarting recognition:", e);
-          }
-        }
-      };
-    }
-
-    // Proses kata yang disebut dan tentukan kaunter zikir mana yang perlu dinaikkan
-    function processSpokenWords(text) {
-      let detected = false;
-
-      for (let zikir of zikirData) {
-        // Semak sekiranya teks mengandungi mana-mana kata kunci yang diprogramkan
-        const matched = zikir.keywords.some(keyword => text.includes(keyword));
-        
-        if (matched) {
-          detected = true;
-          zikir.count++;
-          
-          playBeep(650, 0.08); // Bunyi feedback ringkas bahawa perkataan berjaya dikesan
-          
-          if (zikir.count >= zikir.target && !zikir.completed) {
-            zikir.completed = true;
-            playSuccessSound();
-            speakText(`${zikir.name} selesai`);
-            showToast(`Misi ${zikir.name} tercapai!`);
-          } else {
-            // Sebut nombor kaunter terkini
-            speakText(zikir.count.toString());
-          }
-          
-          saveToLocalStorage();
-          renderZikirCards();
-          break; // Berhenti sekiranya sudah jumpa padanan pertama
-        }
-      }
-
-      if (!detected) {
-        // Jika tidak dapat kesan kata kunci dengan tepat
-        console.log("No matching zikir for: ", text);
-      }
-    }
-
-    // Kawalan Butang Hidup/Matikan Pengecaman
     function toggleListening() {
-      if (!recognition) {
-        setupSpeechRecognition();
+      if(!recognition) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.lang = 'ms-MY';
+        recognition.onresult = (e) => {
+          const text = e.results[e.results.length-1][0].transcript.toLowerCase();
+          zikirData.forEach(z => {
+            if(z.keywords.some(k => text.includes(k))) {
+              z.count++;
+              renderZikirCards();
+            }
+          });
+        };
       }
-
-      if (isListening) {
-        stopListening();
-      } else {
-        startListening();
-      }
+      isListening ? recognition.stop() : recognition.start();
+      isListening = !isListening;
     }
 
-    function startListening() {
-      // Minta kebenaran AudioContext dahulu sekiranya disekat
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      try {
-        recognition.start();
-      } catch (e) {
-        console.log("Start error: ", e);
-      }
-    }
-
-    function stopListening() {
-      isListening = false;
-      if (recognition) {
-        recognition.stop();
-      }
-      document.getElementById('engineStatus').innerText = "Sesi dihentikan.";
-      updateButtonUI(false);
-    }
-
-    function updateButtonUI(active) {
-      const btn = document.getElementById('masterActionBtn');
-      const text = document.getElementById('playBtnText');
-      const icon = document.getElementById('playBtnIcon');
-
-      if (active) {
-        btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-400');
-        btn.classList.add('bg-rose-600', 'hover:bg-rose-500');
-        text.innerText = "Hentikan Pengecaman Suara";
-        icon.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-          </svg>
-        `;
-      } else {
-        btn.classList.remove('bg-rose-600', 'hover:bg-rose-500');
-        btn.classList.add('bg-emerald-500', 'hover:bg-emerald-400');
-        text.innerText = "Mula Pengecaman Suara";
-        icon.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-          </svg>
-        `;
-      }
-    }
-
-    // Kekalkan Skrin Hidup (Wake Lock API) bagi mengelakkan auto-lock semasa memandu
-    let wakeLock = null;
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          console.log('Screen Wake Lock is active!');
-        }
-      } catch (err) {
-        console.warn(`${err.name}, ${err.message}`);
-      }
-    }
-
-    // Aktifkan wake lock setiap kali window mendapat fokus semula
-    document.addEventListener('visibilitychange', async () => {
-      if (wakeLock !== null && document.visibilityState === 'visible') {
-        await requestWakeLock();
-      }
-    });
-
-    // Mula Aplikasi semasa tetingkap dimuatkan
     window.onload = () => {
+      if(localStorage.getItem('theme') === 'light') toggleDarkMode();
       renderZikirCards();
-      requestWakeLock();
-
-      // Sekiranya persekitaran tidak membenarkan Speech Synthesis, tutup pilihan visual tersebut dengan selamat
-      if (!hasSpeechSynthesis) {
-        const voiceToggle = document.getElementById('voiceFeedbackToggle');
-        if (voiceToggle) {
-          voiceToggle.checked = false;
-          voiceToggle.disabled = true;
-          // Gelapkan tulisan label supaya pengguna tahu fungsi itu tidak aktif di persekitaran ini
-          const parentLabel = voiceToggle.closest('label');
-          if (parentLabel) {
-            parentLabel.classList.add('opacity-40', 'cursor-not-allowed');
-            const spanText = parentLabel.querySelector('span');
-            if (spanText) spanText.innerText = "Sebut Bilangan (Tiada Sokongan)";
-          }
-        }
-      }
     };
   </script>
 </body>
