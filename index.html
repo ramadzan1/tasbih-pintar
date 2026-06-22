@@ -1,128 +1,58 @@
-<!DOCTYPE html>
-<html lang="ms">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tasbih Suara Pintar - Zikir Memandu Selamat</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s, color 0.3s; }
-    .arabic-font { font-family: 'Amiri', serif; }
-  </style>
-  <script>
-    function cb(response) { document.getElementById('visitCount').innerText = response.value.toLocaleString(); }
-  </script>
-  <script src="https://api.countapi.xyz/hit/ramadzan1.github.io/tasbih-pintar?callback=cb"></script>
-</head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Amiri&display=swap');
+  body { font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
+  .light-mode { background-color: #f8fafc; color: #1e293b; }
+  .dark-mode { background-color: #0f172a; color: #f8fafc; }
+  .arabic-font { font-family: 'Amiri', serif; }
+</style>
 
-  <header class="bg-slate-800/80 backdrop-blur-md border-b border-slate-700/50 sticky top-0 z-40 px-4 py-4">
+<body class="light-mode min-h-screen flex flex-col">
+
+  <header class="p-4 bg-white border-b border-gray-200">
     <div class="max-w-md mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 text-emerald-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
-        </div>
-        <div>
-          <h1 class="text-base font-bold">Tasbih Suara</h1>
-          <p class="text-xs opacity-70">JK Masjid K. Pertanian Serdang</p>
-        </div>
+      <div>
+        <h1 class="text-xl font-bold text-emerald-700">Tasbih Suara</h1>
+        <p class="text-xs text-gray-500">JK Masjid K. Pertanian Serdang</p>
       </div>
-      <div class="flex gap-2">
-        <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-slate-700 border border-slate-600"><svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path id="iconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg></button>
-      </div>
+      <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-emerald-100 text-emerald-700">🌙</button>
     </div>
   </header>
 
-  <main class="flex-grow max-w-md w-full mx-auto px-4 mt-6 space-y-6">
-    <select id="zikirSelector" onchange="changeZikirSet(this.value)" class="w-full bg-slate-800 text-slate-100 p-3 rounded-xl border border-slate-700 font-semibold shadow-lg">
-      <option value="umum">Zikir Selepas Solat (33x)</option>
-      <option value="nabi-yunus">Zikir Nabi Yunus (100x)</option>
-      <option value="istighfar">Sayyidul Istighfar (100x)</option>
-      <option value="selawat">Selawat Nabi (100x)</option>
+  <main class="max-w-md mx-auto w-full px-4 mt-6 space-y-4">
+    <!-- Dropdown -->
+    <select id="zikirSelector" onchange="changeZikirSet(this.value)" class="w-full bg-white border border-gray-300 p-4 rounded-2xl font-bold shadow-sm">
+       <option value="umum">Zikir Selepas Solat (33x)</option>
+       <option value="nabi-yunus">Zikir Nabi Yunus (100x)</option>
     </select>
 
-    <div class="bg-gradient-to-br from-emerald-950 to-slate-800 border border-emerald-500/20 rounded-2xl p-5 shadow-xl">
-      <p class="text-sm mb-3" id="engineStatus">Sedia untuk berzikir...</p>
-      <button id="masterActionBtn" onclick="toggleListening()" class="w-full py-4 rounded-xl bg-emerald-500 text-slate-950 font-bold text-lg flex items-center justify-center gap-2">Mula Pengecaman Suara</button>
-      <div class="grid grid-cols-2 gap-3 mt-4 text-xs opacity-70">
-        <label class="flex items-center gap-2"><input type="checkbox" id="voiceFeedbackToggle" class="w-4 h-4"> Sebut Bilangan</label>
-        <label class="flex items-center gap-2"><input type="checkbox" id="beepFeedbackToggle" checked class="w-4 h-4"> Bunyi Beep</label>
-      </div>
+    <!-- Butang Utama -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl">
+      <button id="masterActionBtn" onclick="toggleListening()" class="w-full py-5 rounded-2xl bg-emerald-500 text-white font-bold text-lg shadow-lg shadow-emerald-200">
+        Mula Pengecaman Suara
+      </button>
     </div>
 
-    <div id="zikirContainer" class="space-y-4"></div>
+    <!-- Kad Zikir -->
+    <div id="zikirContainer" class="space-y-3"></div>
   </main>
 
-  <footer class="mt-auto text-center py-6 text-xs opacity-60">
-    <div class="mb-3"><span class="bg-slate-800 px-3 py-1 rounded-full">Digunakan: <span id="visitCount">...</span> kali</span></div>
-    <p>Dikembangkan oleh JK Masjid Kompleks Pertanian Serdang</p>
-    <p>Versi: v1.3.0 | 22 Jun 2026</p>
-  </footer>
-
   <script>
-    const zikirSets = {
-      "umum": [{id:'subhanallah', name:'Subhanallah', arabic:'سُبْحَانَ ٱللَّهِ', keywords:['subhanallah'], target:33}, {id:'alhamdulillah', name:'Alhamdulillah', arabic:'ٱلْحَمْدُ لِلَّهِ', keywords:['alhamdulillah'], target:33}],
-      "nabi-yunus": [{id:'yunus', name:'Zikir Nabi Yunus', arabic:'لَا إِلَٰهَ إِلَّا أَنْتَ', keywords:['la ilaha'], target:100}],
-      "istighfar": [{id:'istighfar', name:'Istighfar', arabic:'أَسْتَغْفِرُ ٱللَّهَ', keywords:['astaghfirullah'], target:100}],
-      "selawat": [{id:'selawat', name:'Selawat', arabic:'ٱللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', keywords:['allahumma salli'], target:100}]
-    };
-
-    let zikirData = zikirSets.umum.map(z => ({...z, count: 0, completed: false}));
-    let isListening = false, recognition = null;
-
-    function toggleDarkMode() {
-      const body = document.body;
-      const isDark = body.classList.contains('bg-slate-900');
-      body.className = isDark ? 'bg-white text-slate-900 min-h-screen flex flex-col' : 'bg-slate-900 text-slate-100 min-h-screen flex flex-col';
-      localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }
-
-    function changeZikirSet(setId) {
-      zikirData = zikirSets[setId].map(z => ({...z, count: 0, completed: false}));
-      renderZikirCards();
-    }
-
+    // Fungsi render dengan warna ceria
     function renderZikirCards() {
       const container = document.getElementById('zikirContainer');
       container.innerHTML = zikirData.map(z => `
-        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-          <div class="flex justify-between items-center">
-            <h3 class="font-bold">${z.name}</h3>
-            <span class="arabic-font text-xl">${z.arabic}</span>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-gray-800">${z.name}</h3>
+            <p class="text-3xl font-black text-emerald-600">${z.count} <span class="text-sm text-gray-400">/ ${z.target}</span></p>
           </div>
-          <div class="text-3xl font-bold mt-2">${z.count} / ${z.target}</div>
+          <span class="arabic-font text-2xl text-emerald-800">${z.arabic}</span>
         </div>
       `).join('');
     }
 
-    function toggleListening() {
-      if(!recognition) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.lang = 'ms-MY';
-        recognition.onresult = (e) => {
-          const text = e.results[e.results.length-1][0].transcript.toLowerCase();
-          zikirData.forEach(z => {
-            if(z.keywords.some(k => text.includes(k))) {
-              z.count++;
-              renderZikirCards();
-            }
-          });
-        };
-      }
-      isListening ? recognition.stop() : recognition.start();
-      isListening = !isListening;
+    function toggleDarkMode() {
+      document.body.classList.toggle('light-mode');
+      document.body.classList.toggle('dark-mode');
     }
-
-    window.onload = () => {
-      if(localStorage.getItem('theme') === 'light') toggleDarkMode();
-      renderZikirCards();
-    };
   </script>
-</body>
-</html>
